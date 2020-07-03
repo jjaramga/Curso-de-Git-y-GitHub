@@ -1,0 +1,28 @@
+.body{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+    border: 1px solid grey;
+    width: 800px;
+    height: 320px;; 
+    margin: 0px auto;   
+}
+
+.cabecera{
+background-color: #333AA4;
+padding: 5px;
+box-shadow: 0px 5px 30px 0px rgba(0, 0, 0, 0.75);
+color: white;
+text-align: left;
+height: 50px;
+display: flex;
+align-items: center;
+}
+
+.cabecera-span{
+    margin: 0px 18px;
+}
+
+.content{
+    padding: 20px;
+    font-size: 20px;
+}
