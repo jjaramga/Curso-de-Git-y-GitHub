@@ -3,7 +3,7 @@
     text-align: left;
     border: 1px solid grey;
     width: 800px;
-    height: 320px;; 
+    height: 410px;; 
     margin: 0px auto;   
 }
 
@@ -25,4 +25,12 @@ align-items: center;
 .content{
     padding: 20px;
     font-size: 20px;
+}
+
+.footer{
+height: 40px;
+background-color: #333;
+padding: 10px;
+color: white;
+font-size: 17px;
 }
