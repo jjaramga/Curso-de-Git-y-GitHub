@@ -1,0 +1,356 @@
+/ Estas en la raiz 
+~ Estas en el home (user) documentos
+
+- precede una abreviacion (ls -al)
+-- precede una palabra completa (git config --global)
+
+Añadir commit archivos existentes 
+
+git add o git add . (Este ultimo para varios archivos)
+
+git diff: Permite ver los cambios realizados entre dos commits precede los id's de ambos commits. (Antiguo a Reciente)
+Cuando tengo cambios en el disco duro (Directorio) y en el staged, puedo observarlos por medio de git diff.
+
+git log --stat : Permite ver los cambios realizados en un commit a nivel de detalle.
+
+Comando Checkout : Nos permite viajar en el tiempo de repositorio, sin embargo, hay que tener precaucion antes de hacer un commit. 
+
+git checkout <id commit> <nombre del archivo> ó git checkout master <nombre del archivo> (este ultimo nos retorna el archivo actual de la rama maestra). 
+
+
+
+
+Comandos rm (Se aplican cuando aún no se ha hecho commit)
+
+rm: Este comando nos permite eliminar archivos del repositorio, sin eliminar su historial por lo cual podremos RECUPERAR. 
+
+rm <nombre archivo> --cached: Sacaremos (Eliminación) del archivo del staging (index) pero continuará en el disco duro.
+
+rm --forced: Elimina el archivo del repositorio y del disco duro (Se puede RECUPERAR con comandos avanzados ya que dejamos un rastro.)
+
+Recuperacion: 
+
+git restore --staged  <nombre archivo> se restaura en el staging. 
+
+git restore <nombre archivo> se restaura en el working directory o disco. 
+
+
+
+Comand reset (Se aplican cuando ya el commit ha sido creado)
+
+reset: Este comando nos permite regresar a una version o commit anterior sin la posibilidad de REGRESAR. 
+
+reset --soft <id commit>: Regresa el repositorio al commit indicado, conservando los cambios del staging y disco duro permitiendo aplicarlos luego por medio de un commit.
+
+reset --hard <id commit>: Regresa el repositorio al commit indicado, eliminando los cambios realizados posterior a este, tanto en staging como en disco duro. SIGNIFICA PELIGRO.
+
+reset HEAD: El archivo continuara en el staging (index) pero los cambios realizados NO, mientras que el rm cached eliminá el archivo y sus cambios del staging. Este comando impide que los cambios de cierto archivo sean agregados al repositorio sin estar listos.
+
+reset HEAD <nombre achivo>
+
+
+
+Flujo de trabajo básico con un repositorio remoto
+
+git clone <url> : Sirve para clonar un repositorio de un servidor remoto, trae dos archivos uno para el working directory y otro para el repositorio local con todo su historial de cambios.
+
+git push : Se utliza para añadir los cambios realizados a mi repositorio remoto. 
+
+git fetch (AL REPOSITORIO): Agrega actualizaciones del repositorio remoto que se hayan generado mientras trabajaba localmente y por tanto no fueron descargadas en la clonación.  
+
+Nota: el git fetch las añade SOLO AL REPOSITORIO.
+
+git merge: Realiza la misma accion que el git fetch pero en vez de agregarlas al REPOSITORIO las agrega al WORKING DIRECTORY.
+
+GIT PULL : Es una combinación de los dos comandos anteriores (fetch y merge). Este comando trae el repositorio con su historial y la version para el directorio (Working directory). 
+
+git commit -am : Comando utilizado para hacer un commit a archivos que hayan sido cambiados y que previamente ya se les haya realizado un git add (Es decir archivos antiguos)
+
+
+
+Ramas o Branches. 
+
+Creación
+
+git branch <nombre rama>
+
+Una vez creada me puedo desplazar hacia la nueva rama por medio del git checkout <nombre rama>. Inicialmente el HEAD apuntara a la rama master y la nueva rama, debido a que ambas versiones son iguales, sin embargo, una vez se empiecen a realizar cambios. El HEAD apuntara a solo la rama descrita en el comando checkout. 
+
+El comando checkout permite el desplazamiento entre ramas y de acuerdo a su posicion los archivos en el working directory cambiaran. IMPORTANTE realizar commit antes de cambiar de rama para no perder los cambios.
+
+git merge : Realiza una union entre ramas, el comando debe de ser invocado desde la master ó desde la rama a la cual le deseo añadir información de otra rama. 
+
+git merge <nombre rama> <mensaje>
+
+Los conflictos se generan cuando en dos ramas se sobreescribe la misma linea. Por lo cual en los archivos involucrados apareceran las lineas con conflicto y podremos seleccionar las que deseamos preservar. Luego se necesita de un commit guardando las correciones y el merge se hará automaticamente.
+
+El commit asociado al merge se puede observar con git log y en su detalle observaremos los commits involucrados.
+
+GitHub
+
+Para subir archivos nuevos a GitHub (Repositorio remoto) obtenemos la ruta por medio del clone or download
+
+en Git Bash : 
+
+git remote add origin <ruta>: Establecer un origin (GitHub) susceptible a fecth o push
+
+Luego. 
+
+git pull origin master --allow-unrelated-histories(archivos nuevos): Es necesario traer la información que actualmente tiene el repositorio remoto. Debido a que el repositorio remoto no contiene mi trabajo local. FORZAMOS la union de dos historias no relacionadas.
+
+Luego
+
+git push origin master: enviaremos a nuestro repositorio la informacion del rep. local ubicado en la rama master.
+
+Una vez que los archivos estan en GitHub puedo observar a quien pertenece cada cambio desde la pestaña Blame (culpa)
+
+GitHub: permite realizar edicion y commits 
+
+
+Llaves y cifrado.
+
+Las llaves publicas y privadas se deben crear por cada computador. La llave publica se sube a la cuenta de GitHub e internamente GitHub nos comparte su llave publica creandose un doble canal de cifrado. Todo esto ocurre cuando inicialmente realizamos la conexion con SSH (Security Shared) en vez de HTTPS.
+
+git config --global user.email <correo@electronico> : Asignación de correo a nuestro git.  
+
+Creación de llave : Lo ideal es estar en el home (~) y el comando es :
+
+ssh-keygen -t rsa (algoritmo de creación) -b 4096 (complejidad) -C "<correo de github>"
+
+Pasos agregación de llaves.
+
+Windows ó Linux: Es necesario revisar que el servidor de llaves SSH este encendido con el siguiente comando
+
+1. eval $(ssh-agent -s)
+
+Luego subir la llave privada a ese servidor ya evaluado. 
+
+2.ssh-add ~/.ssh/id_rsa (ruta donde fueron creadas las llaves).
+
+3.Subir llave publica a GitHub. 
+
+4.Clone o descargue el repositorio remoto con SSH. 
+
+5.Cambiamos la URL de nuestro repositorio remoto (origin) con el comando git remote set-url origin <url copiada>
+
+6.Observamos el cambio realizado con git remote -v (nos mostrará la URL del repositorio remoto)
+
+7.git pull para aceptar la nueva autenticación. 
+
+Antes de hacer un commit de un cambio al origin (repositorio remoto) es BUENA PRACTICA hacer un git pull origin master. Esto para insertar a nuestro working directory los cambios que hayan podido efectuarse en el origin. 
+
+git push origin master : Enviará los cambios al repositorio remoto.
+
+
+Tags ó Etiquetas
+
+git log --all --graph --decorate --oneline: Expresa de forma visual el comportamiento que han tenido las ramas.
+
+Los alias nos permiten almacenar un comando en una palabra. 
+
+alias <nombre-alias> = "git log --all --graph --decorate --oneline"
+
+Creación de un tag : Un tag es una palabra que nos permite identificar un punto especifico (commit) en la historia de nuestro repositorio y son mas utiles en GitHub
+
+git tag -a <nombre del tag (v0.1)> -m "<Mensaje>" <hash-commit>
+
+git tag : Ver los tags que tiene un repositorio.
+
+git show-ref --tags : Ver la referencia de un tag 
+
+git push origin --tags : Los tags no son cambios son marcas y al igual que los commits tambien se pueden enviar al repositorio remoto. 
+
+git tag -d <nombre tag> : Eliminación del tag en Git. 
+
+git push origin :refs/tags/<nombre tag> :Eliminación en GitHub 
+
+
+
+Manejo de ramas en GitHub
+
+git show-branch : Nos muestra las ramas que existen y su historia.
+
+git show-branch --all: Este comando realiza la misma funcion que el anterior pero con mas detalle. 
+
+gitk : Ejecuta una representación visual de nuestro repositorio, incluyendo las ramas, tags etc.
+
+Para insertar una rama a nuestro git hub usamos el comando git push origin <nombre-rama>
+
+
+
+Flujo de trabajo profesional: Haciendo merge de ramas de desarrollo a master
+
+Buenas practicas: Los repositorios no deben contener archivos binarios (imagenes) y la rama master contiene los cambios definitivos a produccion. 
+
+Cuando el proyecto ya es existente utilizamos el comando git clone <url>
+
+Para revisar los cambios realizados en una rama antes de hacer un merge, debo de estar ubicado en la rama que deseo verificar con checkout (footer) luego realizo un git pull origin footer para revisar los cambios hechos en esta rama. 
+y luego procedo con el merge.
+ 
+Teniendo la rama header y footer, el encargado de unir los cambios a la rama maestra realiza un merge primero a header y luego otro merge a footer.
+
+
+
+Flujo de trabajo profesional con Pull requests : 
+
+Entorno de trabajo: La rama master se bloquea de manera que no se realicen commits o merge sin control alguno. 
+Tambien hay servidores exclusivamente para pruebas llamados (staging develop).
+Las ramas que creamos como footer o header normalmente se conocen como feature.
+
+Pull request: Estado intermedio o area de "staging" en el servidor utilizada para verificar cambios realizados por medio de una rama diferente a master. Una vez que los cambios son aprobados se realiza el merge (Labor asignada a un DevOps). Puede ser usado en un servidor de pruebas (staging develop) ó producción.
+
+Es una funcionalidad de github (en gitlab llamada merge request y en bitbucket push request)
+ 
+Pull request. (Ejemplo rama fix-typo)
+
+1. Creamos una rama en nuestro repositorio. git branch fix-typo
+
+2. Realizamos un git pull origin master en la nueva rama.
+
+3. Realizamos una modificación con su respectivo commit.
+
+4. Realizamos un git push origin fix-typo.
+
+GitHub 
+
+5. Creacion manual o automatica del Pull Request. 
+
+6. Este puede ser aprobado o denegado por el DevOp (Pestaña conversations)
+
+7. Una vez aprobado se puede realizar el merge y es opcional eliminar el branch. 
+
+
+
+Fork (Bifurcación)
+
+Funcionalidad de GitHub que permite clonar un repositorio publico, creando una copia en nuestro GitHub. 
+
+Haciendo un Fork 
+
+1. En el repositorio original, damos click en Fork (Esto nos redireccionará a la copia creada en nuestro GitHub)
+
+2. Luego desde nuestro repositorio copia, copiamos la URL del proyecto 
+
+3. git clone <url-copiada>
+
+El repositorio original siempre esta susceptible a cambios, por lo cual GitHub nos permite realizar pull request hacia nuestra direccion para validar si queremos añadir los nuevos cambios a nuestro repositorio copia. 
+
+Realizando un pull request hacia nuestro proyecto copia desde consola. 
+
+1. Creación de fuente de datos adicional (La creacion se realiza solo una vez)
+   git remote add <nombre-rama> (Normalmente upstream) <url repositorio original>
+
+2. git pull upstream master
+
+3. git commit -am "<mensaje>"
+
+4. Envio de datos a nuestro repositorio 
+   git push origin master 
+
+IMPORTANTE Flujo de trabajo: 
+
+Este entorno tendrá dos flujos de datos origin (Apunta a nuestro GitHub) y upstream (Apunta al repositorio original) por tanto:
+
+git pull upstream master: Traemos los cambios del repositorio original al nuestro. 
+
+git push origin master: Enviamos las modificaciones a nuestro repositorio copia en GitHub para proceder con el Pull Request al original.
+
+
+
+Desarrollo continuo: Existen sistemas que permiten que nuestro servidor este sincronizado con nuestro repositorio remoto de GitHub. Estos sistemas permiten actualizar en nuestro servidor los cambios que le realicemos a la rama de produccion por medio de Push. Travis-ci y Jenkins son algunos. 
+
+
+.gitignore: es una lista de archivos que vamos a ignorar, con el fin de no subirlo a nuestro repositorio. Entre estos archivos pueden estar las contraseñas, conexion a DB ó imagenes de un proyecto. imgur es un sitio en el cual podremos subir imagenes y poder referenciarlas.
+
+Edicion de README : El formato del README normalmente es .md (markdown). https://pandao.github.io/editor.md/en.html
+
+
+
+Rebase: Se utiliza para adicionar cambios a la historia de una rama. Se considera una mala practica debido a que altera la historia del repositorio, ya que en su historia no se visualiza la creacion una rama. CAMBIOS SILENCIOSOS. 
+
+Una vez realizados los cambios a unificar: 
+
+1. Desde la rama que deseamos eliminar: git rebase master. 
+
+2. Dese la rama maestra : git rebase experimento. 
+
+
+
+Stash: Comando que nos permite guardar cambios que no se han ingresado en un commit y posteriormente recuperarlos
+
+git stash : Guardar cambios en memoria y regresa los archivos a su ultimo commit
+
+git stash list : Permite visualizar la ubicacion del WIP(Working in progress)
+
+git stash pop: Permite recuperar los cambios del WIP
+
+git stash branch <nombre-rama>: Creacion automatica de una rama con los cambios del WIP. 
+
+git stash drop: Eliminar los cambios del WIP.
+
+
+Git Clean: limpiar tu proyecto de archivos no deseados
+
+git clean: Nos permite eliminar archivos no deseados como copias 
+
+git clean --dry-run: Simulación que mostrará los archivos a eliminar.
+
+git clean -f: Forzamos la eliminación luego de verificar con el comando anterior que se eliminará
+
+Nota: Las carpetas copias no se eliminan ya que git observa solo archivos, así mismo cualquier archivo que este incluido en el .gitignore
+
+
+Git cherry-pick: traer commits viejos al head de un branch. Se considera una mala practica, por lo cual es mejor utilizar el git checkout o git merge de acuerdo a nuestra necesidad.
+
+git cherry-pick <hash-commit>: comando que nos permite pegar un commit a otra rama. El hash del commit lo obtenemos por medio git log --oneline.
+
+
+Reconstruir commits en Git con amend: Este comando nos permite modificar el ultimo commit. 
+
+git commit --amend: Luego de ingresado el comando se habilita el VIM para ingresar el comentario.
+
+
+
+Reflog: Este comando nos muestra la historia de los HEAD que ha tenido nuestro repositorio. Es utilizado para identificar un hash que nos permita regresar a una version estable, luego de se hayan generado daños en nuestro repositorio.
+
+
+Buscar en archivos y commits de Git con Grep y log
+
+git grep: se utiliza para buscar en los archivos y recibe las siguientes combinaciones:
+
+git grep <palabra a buscar>: Muestra en que archivos he utilizado esa palabra.
+
+git grep -n <palabra a buscar>: Muestra en cual linea ó renglon del archivo se encuentra la palabra.
+
+git grep -c <palabra a buscar>: Muestra la cantidad de veces que aparece una palabra en un archivo. 
+
+
+git log: se utiliza para realizar busquedas en los commits 
+
+git log -S "palabra a buscar": Busca un commit asociado de alguna manera a esa palabra.
+
+
+Comandos y recursos colaborativos en Git y GitHub
+
+git shortlog -sn = Muestra cuantos commit ha hecho cada miembro.
+git shortlog -sn --all = Muestra cuantos commit ha hecho cada miembro incluyendo los eliminados.
+git shortlog -sn --all --no-merge = Muestra cuantos commit ha hecho cada miembro incluyendo los eliminados pero sin los merge.
+git blame <nombre del archivo> = Muestra los cambios realizados por cada miembro en un archivo.
+git <comando> --help = Muestra el funcionamiento de un comando.
+git blame <nombre del archivo> -L<numero de linea>,<numero de linea> = Muestra los cambios realizados por cada miembro entre dos lineas. Ejemplo  -L35,50
+git branch -r = Muestra las ramas remotas.
+git branch -a = Muestra las ramas remotas y locales.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
